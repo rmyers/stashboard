@@ -29,8 +29,6 @@ from horizon.templatetags import sizeformat
 from horizon.utils import filters
 
 from stashboard import api
-from stashboard.content.database_backups \
-    import tables as backup_tables
 
 
 ACTIVE_STATES = ("ACTIVE",)
@@ -87,9 +85,9 @@ class RestartInstance(tables.BatchAction):
     classes = ('btn-danger', 'btn-reboot')
 
     def allowed(self, request, instance=None):
-        return ((instance.status in ACTIVE_STATES
-                 or instance.status == 'SHUTDOWN'
-                 or instance.status == 'RESTART_REQUIRED'))
+        return ((instance.status in ACTIVE_STATES or
+                 instance.status == 'SHUTDOWN' or
+                 instance.status == 'RESTART_REQUIRED'))
 
     def action(self, request, obj_id):
         api.trove.instance_restart(request, obj_id)
@@ -116,8 +114,8 @@ class DetachReplica(tables.BatchAction):
     classes = ('btn-danger', 'btn-detach-replica')
 
     def allowed(self, request, instance=None):
-        return (instance.status in ACTIVE_STATES
-                and hasattr(instance, 'replica_of'))
+        return (instance.status in ACTIVE_STATES and
+                hasattr(instance, 'replica_of'))
 
     def action(self, request, obj_id):
         api.trove.instance_detach_replica(request, obj_id)
@@ -130,8 +128,8 @@ class PromoteToReplicaSource(tables.LinkAction):
     classes = ("ajax-modal", "btn-promote-to-replica-source")
 
     def allowed(self, request, instance=None):
-        return (instance.status in ACTIVE_STATES
-                and hasattr(instance, 'replica_of'))
+        return (instance.status in ACTIVE_STATES and
+                hasattr(instance, 'replica_of'))
 
     def get_link_url(self, datum):
         instance_id = self.table.get_object_id(datum)
@@ -159,8 +157,8 @@ class EjectReplicaSource(tables.BatchAction):
     classes = ('btn-danger', 'btn-eject-replica-source')
 
     def _allowed(self, request, instance=None):
-        return (instance.status != 'PROMOTE'
-                and hasattr(instance, 'replicas'))
+        return (instance.status != 'PROMOTE' and
+                hasattr(instance, 'replicas'))
 
     def action(self, request, obj_id):
         api.trove.eject_replica_source(request, obj_id)
@@ -446,8 +444,8 @@ class ResizeInstance(tables.LinkAction):
     classes = ("ajax-modal", "btn-resize")
 
     def allowed(self, request, instance=None):
-        return ((instance.status in ACTIVE_STATES
-                 or instance.status == 'SHUTOFF'))
+        return ((instance.status in ACTIVE_STATES or
+                 instance.status == 'SHUTOFF'))
 
     def get_link_url(self, datum):
         instance_id = self.table.get_object_id(datum)
@@ -461,8 +459,8 @@ class AttachConfiguration(tables.LinkAction):
     classes = ("btn-attach-config", "ajax-modal")
 
     def allowed(self, request, instance=None):
-        return (instance.status in ACTIVE_STATES
-                and not hasattr(instance, 'configuration'))
+        return (instance.status in ACTIVE_STATES and not
+                hasattr(instance, 'configuration'))
 
 
 class DetachConfiguration(tables.BatchAction):
@@ -717,35 +715,6 @@ class DatabaseTable(tables.DataTable):
 
 def is_incremental(obj):
     return hasattr(obj, 'parent_id') and obj.parent_id is not None
-
-
-class InstanceBackupsTable(tables.DataTable):
-    name = tables.Column("name",
-                         link="horizon:project:database_backups:detail",
-                         verbose_name=_("Name"))
-    created = tables.Column("created", verbose_name=_("Created"),
-                            filters=[filters.parse_isotime])
-    location = tables.Column(lambda obj: _("Download"),
-                             link=lambda obj: obj.locationRef,
-                             verbose_name=_("Backup File"))
-    incremental = tables.Column(is_incremental,
-                                verbose_name=_("Incremental"),
-                                filters=(d_filters.yesno,
-                                         d_filters.capfirst))
-    status = tables.Column(
-        "status",
-        verbose_name=_("Status"),
-        status=True,
-        status_choices=backup_tables.STATUS_CHOICES,
-        display_choices=backup_tables.STATUS_DISPLAY_CHOICES)
-
-    class Meta(object):
-        name = "backups"
-        verbose_name = _("Backups")
-        status_columns = ["status"]
-        row_class = UpdateRow
-        table_actions = (backup_tables.LaunchLink, backup_tables.DeleteBackup)
-        row_actions = (backup_tables.RestoreLink, backup_tables.DeleteBackup)
 
 
 class ConfigDefaultsTable(tables.DataTable):

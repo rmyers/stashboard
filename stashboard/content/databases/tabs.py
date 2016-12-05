@@ -120,28 +120,6 @@ class DatabaseTab(tabs.TableTab):
         return tables.has_database_add_perm(request)
 
 
-class BackupsTab(tabs.TableTab):
-    table_classes = [tables.InstanceBackupsTable]
-    name = _("Backups")
-    slug = "backups_tab"
-    instance = None
-    template_name = "horizon/common/_detail_table.html"
-    preload = False
-
-    def get_backups_data(self):
-        instance = self.tab_group.kwargs['instance']
-        try:
-            data = api.trove.instance_backups(self.request, instance.id)
-        except Exception:
-            msg = _('Unable to get database backup data.')
-            exceptions.handle(self.request, msg)
-            data = []
-        return data
-
-    def allowed(self, request):
-        return request.user.has_perm('openstack.services.object-store')
-
-
 class LogsTab(tabs.TableTab):
     table_classes = [log_tables.LogsTable]
     name = _("Logs")
@@ -163,5 +141,5 @@ class LogsTab(tabs.TableTab):
 
 class InstanceDetailTabs(tabs.TabGroup):
     slug = "instance_details"
-    tabs = (OverviewTab, UserTab, DatabaseTab, BackupsTab, LogsTab)
+    tabs = (OverviewTab, UserTab, DatabaseTab, LogsTab)
     sticky = True
