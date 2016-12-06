@@ -22,6 +22,9 @@ from openstack_dashboard.api import base
 from horizon.utils import functions as utils
 from horizon.utils.memoized import memoized  # noqa
 
+from openstack_dashboard.dashboards.project.instances \
+    import utils as instance_utils
+
 LOG = logging.getLogger(__name__)
 
 
@@ -242,7 +245,7 @@ def backup_create(request, name, instance_id, description=None,
 
 
 def flavor_list(request):
-    return troveclient(request).flavors.list()
+    return instance_utils.flavor_list(request)
 
 
 def datastore_flavors(request, datastore_name=None,
@@ -259,7 +262,9 @@ def datastore_flavors(request, datastore_name=None,
 
 
 def flavor_get(request, flavor_id):
-    return troveclient(request).flavors.get(flavor_id)
+    flavors = instance_utils.flavor_list(self.request)
+    flavor = [x for x in flavors if x.id == flavor_id][0]
+    return flavor
 
 
 def root_enable(request, instance_ids):
