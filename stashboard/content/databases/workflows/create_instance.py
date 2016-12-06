@@ -202,9 +202,9 @@ class SetInstanceDetailsAction(workflows.Action):
                             ds.name, v.name)
                         version_choices = (version_choices +
                                            ((widget_text, selection_text),))
-                        self._add_datastore_flavor_field(request,
-                                                         ds.name,
-                                                         v.name)
+                        # self._add_datastore_flavor_field(request,
+                        #                                  ds.name,
+                        #                                  v.name)
                     choices = choices + version_choices
         return choices
 
