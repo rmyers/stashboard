@@ -262,7 +262,7 @@ def datastore_flavors(request, datastore_name=None,
 
 
 def flavor_get(request, flavor_id):
-    flavors = instance_utils.flavor_list(self.request)
+    flavors = instance_utils.flavor_list(request)
     flavor = [x for x in flavors if x.id == flavor_id][0]
     return flavor
 
