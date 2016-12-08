@@ -270,8 +270,8 @@ class DetailView(horizon_tabs.TabbedTableView):
             instance.full_flavor = api.trove.flavor_get(
                 self.request, instance.flavor["id"])
         except Exception:
-            LOG.error('Unable to retrieve flavor details'
-                      ' for database instance: %s' % instance_id)
+            LOG.excetion('Unable to retrieve flavor details'
+                         ' for database instance: %s' % instance_id)
         return instance
 
     def get_tabs(self, request, *args, **kwargs):
