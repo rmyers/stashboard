@@ -78,7 +78,7 @@ class ClusterGrow(tables.LinkAction):
     url = "horizon:project:database_clusters:cluster_grow_details"
 
     def allowed(self, request, cluster=None):
-        if cluster and cluster.task["name"] == 'NONE':
+        if cluster and get_task(cluster) == 'NONE':
             return True
         return False
 
@@ -89,8 +89,7 @@ class ClusterShrink(tables.LinkAction):
     url = "horizon:project:database_clusters:cluster_shrink_details"
 
     def allowed(self, request, cluster=None):
-        if (cluster and cluster.task["name"] == 'NONE' and
-                db_capability.can_modify_cluster(cluster.datastore['type'])):
+        if cluster and get_task(cluster) == 'NONE':
             return True
         return False
 
@@ -102,8 +101,7 @@ class ResetPassword(tables.LinkAction):
     classes = ("ajax-modal",)
 
     def allowed(self, request, cluster=None):
-        if (cluster and cluster.task["name"] == 'NONE' and
-                db_capability.is_vertica_datastore(cluster.datastore['type'])):
+        if cluster and get_task(cluster) == 'NONE':
             return True
         return False
 
