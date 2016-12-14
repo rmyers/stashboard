@@ -154,7 +154,8 @@ def get_size(cluster):
 def get_task(cluster):
     if hasattr(cluster, 'task'):
         return cluster.task["name"]
-    return 'Unavailable'
+    return 'NONE'
+
 
 class ClustersTable(tables.DataTable):
     TASK_CHOICES = (
