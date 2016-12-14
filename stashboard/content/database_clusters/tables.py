@@ -78,8 +78,7 @@ class ClusterGrow(tables.LinkAction):
     url = "horizon:project:database_clusters:cluster_grow_details"
 
     def allowed(self, request, cluster=None):
-        if (cluster and cluster.task["name"] == 'NONE' and
-                db_capability.can_modify_cluster(cluster.datastore['type'])):
+        if cluster and cluster.task["name"] == 'NONE':
             return True
         return False
 
